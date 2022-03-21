@@ -17,4 +17,4 @@ jobs:
   check_pull_request:
     name: Pull request
     needs: [ check_push_context ]
-    uses: Andrianov-Artemii/ppt-solutions-2022/.github/workflows/open-pull-request.yml@master    
+    uses: Andrianov-Artemii/ppt-solutions-2022/.github/workflows/open-pull-request.yml@master
