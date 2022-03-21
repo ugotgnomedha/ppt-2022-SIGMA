@@ -1,0 +1,9 @@
+name: Push tests
+
+on: [ push, workflow_call ]
+
+jobs:   
+
+  check_push_context:
+    name: Push
+    uses: Andrianov-Artemii/ppt-solutions-2022/.github/workflows/onpush-in-repo.yml@master

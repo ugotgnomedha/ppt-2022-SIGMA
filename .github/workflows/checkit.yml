@@ -1,0 +1,20 @@
+# This workflow run security tests and send message for orgs into chat
+# -679349277
+name: Check it!
+
+on:
+  pull_request:
+    branches:
+      - checked
+    types: [opened, reopened]
+
+jobs:
+
+  check_push_context:
+    name: Push
+    uses: Andrianov-Artemii/ppt-solutions-2022/.github/workflows/onpush-in-repo.yml@master
+
+  check_pull_request:
+    name: Pull request
+    needs: [ check_push_context ]
+    uses: Andrianov-Artemii/ppt-solutions-2022/.github/workflows/open-pull-request.yml@master    
