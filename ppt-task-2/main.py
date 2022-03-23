@@ -22,7 +22,7 @@ def establishConn():
                 print("Внимание, нарушение контура безопасности!")
                 stopper()  # Alarm
     except socket.timeout:
-        print("Не удалось установить подключение")
+        print("Не удалось установить подключение / Превышено время ожидания")
 
 
 def stateChecker():
@@ -52,7 +52,17 @@ def stateDetails():
     data = sock.recv(4096)
     trashResponseCheck(data)  # Check if response is unclear.
     response = json.loads(data)
-    print(response)
+    responseParser(response)
+
+
+def responseParser(response):
+    if response["state"] != "true":
+        print("разрыв контура безопасности")
+    if response["ebutton"] == "true":
+        print("кнопка нажата (оператор остановил работу)")
+    if response["end_cap"] == "true":
+        print("концевик зажат (достигнута предельная деформация демпфера)")
+    print("Расстояние измеренное с дальномеров контура безопасности: " + response["dist"])
 
 
 sock = socket.socket(socket.AF_INET,  # Internet
