@@ -1,5 +1,6 @@
 import socket
 import json
+import os
 
 
 def trashResponseCheck(response):
@@ -69,8 +70,8 @@ sock = socket.socket(socket.AF_INET,  # Internet
                      socket.SOCK_DGRAM)  # UDP
 sock.settimeout(5)  # 5 second timeout on commands
 
-UDP_IP = "localhost"
-UDP_PORT = 5005
+UDP_IP = os.environ['host']
+UDP_PORT = os.environ['port']
 
 establishConn()  # Establish connection to server.
 
