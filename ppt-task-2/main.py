@@ -74,7 +74,7 @@ sock.settimeout(5)  # 5 second timeout on commands
 UDP_IP = os.environ['host']
 UDP_PORT = os.environ['port']
 
-addr = (UDP_IP, UDP_PORT)
+addr = (UDP_IP, int(UDP_PORT))
 
 establishConn()  # Establish connection to server.
 
