@@ -12,7 +12,8 @@ def trashResponseCheck(response):
 
 def establishConn():
     try:
-        sock.sendto(b'INIT_CIRC', (UDP_IP, UDP_PORT))
+        sock.sendto(b'', addr)
+        # sock.sendto(b'INIT_CIRC', (int(UDP_IP), int(UDP_PORT)))
         data = sock.recv(4096)
         trashResponseCheck(data)  # Check if response is unclear.
         if data == "OK":
@@ -27,7 +28,7 @@ def establishConn():
 
 
 def stateChecker():
-    sock.sendto(b'CIRC_STATE', (UDP_IP, UDP_PORT))
+    sock.sendto(b'CIRC_STATE', addr)
     data = sock.recv(4096)
     trashResponseCheck(data)  # Check if response is unclear.
     state = True
@@ -39,7 +40,7 @@ def stateChecker():
 
 
 def stopper():
-    sock.sendto(b'ALARM', (UDP_IP, UDP_PORT))
+    sock.sendto(b'ALARM', addr)
     data = sock.recv(4096)
     trashResponseCheck(data)  # Check if response is unclear.
     if data != "STOPPED":
@@ -49,7 +50,7 @@ def stopper():
 
 
 def stateDetails():
-    sock.sendto(b'CIRC_ALL_STATE', (UDP_IP, UDP_PORT))
+    sock.sendto(b'CIRC_ALL_STATE', addr)
     data = sock.recv(4096)
     trashResponseCheck(data)  # Check if response is unclear.
     response = json.loads(data)
@@ -72,6 +73,8 @@ sock.settimeout(5)  # 5 second timeout on commands
 
 UDP_IP = os.environ['host']
 UDP_PORT = os.environ['port']
+
+addr = (UDP_IP, UDP_PORT)
 
 establishConn()  # Establish connection to server.
 
