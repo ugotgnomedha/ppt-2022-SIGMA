@@ -22,38 +22,51 @@ def establishConn():
             else:
                 print("Внимание, нарушение контура безопасности!")
                 stopper()  # Alarm
-    except socket.timeout:
+    except:
         print("Не удалось установить подключение / Превышено время ожидания")
+        exit(555)
 
 
 def stateChecker():
-    sock.sendall(b'CIRC_STATE')
-    data = sock.recv(4096)
-    trashResponseCheck(data.decode())  # Check if response is unclear.
-    state = True
-    if data.decode() == "SOLID":
-        state = True
-    elif data.decode() == "BREAK":
-        state = False
+    state = False
+    try:
+        sock.sendall(b'CIRC_STATE')
+        data = sock.recv(4096)
+        trashResponseCheck(data.decode())  # Check if response is unclear.
+        if data.decode() == "SOLID":
+            state = True
+        elif data.decode() == "BREAK":
+             state = False
+    except:
+        print("Не удалось установить подключение / Превышено время ожидания")
+        exit(555)
     return state
 
 
 def stopper():
-    sock.sendall(b'ALARM')
-    data = sock.recv(4096)
-    trashResponseCheck(data.decode())  # Check if response is unclear.
-    if data.decode() != "STOPPED":
-        stopper()  # Send ALARM again if previous didn't stop the server.
-    elif data.decode() == "STOPPED":
-        stateDetails()  # Get detailed info about state.
+    try:
+        sock.sendall(b'ALARM')
+        data = sock.recv(4096)
+        trashResponseCheck(data.decode())  # Check if response is unclear.
+        if data.decode() != "STOPPED":
+            stopper()  # Send ALARM again if previous didn't stop the server.
+        elif data.decode() == "STOPPED":
+            stateDetails()  # Get detailed info about state.
+    except:
+        print("Не удалось установить подключение / Превышено время ожидания")
+        exit(555)
 
 
 def stateDetails():
-    sock.sendall(b'CIRC_ALL_STATE')
-    data = sock.recv(4096)
-    trashResponseCheck(data.decode())  # Check if response is unclear.
-    response = json.loads(data.decode())
-    responseParser(response)
+    try:
+        sock.sendall(b'CIRC_ALL_STATE')
+        data = sock.recv(4096)
+        trashResponseCheck(data.decode())  # Check if response is unclear.
+        response = json.loads(data.decode())
+        responseParser(response)
+    except:
+        print("Не удалось установить подключение / Превышено время ожидания")
+        exit(555)
 
 
 def responseParser(response):
@@ -63,7 +76,12 @@ def responseParser(response):
         print("кнопка нажата (оператор остановил работу)")
     if response["end_cap"] == "true":
         print("концевик зажат (достигнута предельная деформация демпфера)")
-    print("Расстояние измеренное с дальномеров контура безопасности: " + response["dist"])
+    if response["dist"][0] < 50:
+        print("Превышена предельная дистанция дальномера")
+    if response["dist"][1] < 50:
+        print("Превышена предельная дистанция дальномера")
+    if response["dist"][2] < 50:
+        print("Превышена предельная дистанция дальномера")
 
 
 sock = socket.socket(socket.AF_INET,  # Internet
