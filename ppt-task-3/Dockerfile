@@ -10,6 +10,6 @@ ENV host=127.0.0.1
 ENV port=80
 
 # добавить, если используются какие-либо библиотеки при сборке решения 
-# RUN pip3 install -r requirements.txt
+RUN pip3 install -r requirements.txt
 
 CMD [ "python", "/ppt-task-3/main.py"]
