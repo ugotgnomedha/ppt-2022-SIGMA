@@ -12,11 +12,10 @@ def trashResponseCheck(response):
 
 def establishConn():
     try:
-        sock.sendto(b'', addr)
-        # sock.sendto(b'INIT_CIRC', (int(UDP_IP), int(UDP_PORT)))
+        sock.sendall(b'INIT_CIRC')
         data = sock.recv(4096)
-        trashResponseCheck(data)  # Check if response is unclear.
-        if data == "OK":
+        trashResponseCheck(data.decode())  # Check if response is unclear.
+        if data.decode() == "OK":
             print("Установлено подключение к контуру безопасности")
             while stateChecker():  # Check server status.
                 i = 0  # Do nothing if state is normal
@@ -28,32 +27,32 @@ def establishConn():
 
 
 def stateChecker():
-    sock.sendto(b'CIRC_STATE', addr)
+    sock.sendall(b'CIRC_STATE')
     data = sock.recv(4096)
-    trashResponseCheck(data)  # Check if response is unclear.
+    trashResponseCheck(data.decode())  # Check if response is unclear.
     state = True
-    if data == "SOLID":
+    if data.decode() == "SOLID":
         state = True
-    elif data == "BREAK":
+    elif data.decode() == "BREAK":
         state = False
     return state
 
 
 def stopper():
-    sock.sendto(b'ALARM', addr)
+    sock.sendall(b'ALARM')
     data = sock.recv(4096)
-    trashResponseCheck(data)  # Check if response is unclear.
-    if data != "STOPPED":
+    trashResponseCheck(data.decode())  # Check if response is unclear.
+    if data.decode() != "STOPPED":
         stopper()  # Send ALARM again if previous didn't stop the server.
-    elif data == "STOPPED":
+    elif data.decode() == "STOPPED":
         stateDetails()  # Get detailed info about state.
 
 
 def stateDetails():
-    sock.sendto(b'CIRC_ALL_STATE', addr)
+    sock.sendall(b'CIRC_ALL_STATE')
     data = sock.recv(4096)
-    trashResponseCheck(data)  # Check if response is unclear.
-    response = json.loads(data)
+    trashResponseCheck(data.decode())  # Check if response is unclear.
+    response = json.loads(data.decode())
     responseParser(response)
 
 
@@ -69,12 +68,16 @@ def responseParser(response):
 
 sock = socket.socket(socket.AF_INET,  # Internet
                      socket.SOCK_DGRAM)  # UDP
-sock.settimeout(5)  # 5 second timeout on commands
 
 UDP_IP = os.environ['host']
 UDP_PORT = os.environ['port']
 
+# UDP_IP = "localhost"
+# UDP_PORT = 5005
+
 addr = (UDP_IP, int(UDP_PORT))
+
+sock.connect(addr)
 
 establishConn()  # Establish connection to server.
 
