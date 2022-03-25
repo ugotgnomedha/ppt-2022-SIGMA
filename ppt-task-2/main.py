@@ -36,7 +36,7 @@ def stateChecker():
         if data.decode() == "SOLID":
             state = True
         elif data.decode() == "BREAK":
-             state = False
+            state = False
     except:
         print("Не удалось установить подключение / Превышено время ожидания")
         exit(555)
