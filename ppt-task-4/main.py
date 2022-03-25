@@ -16,11 +16,50 @@ def mainMover():
         data = sock.recv(4096)
         trashResponseCheck(data.decode())  # Check if response is unclear.
 
-        # MOVE
-        # MOVE
-        # MOVE
-        # MOVE
-        # MOVE
+        moveDrive(6, 90)
+        moveDrive(6, -90)
+
+        lMove("ASM", 0, 0, 0, 0, 0, 0)
+
+        moveDraw(102, 10, -70, 0, 0, 0)
+        moveDraw(0, 0, -43, 0, 0, 0)
+        moveDraw(0, 0, 43, 0, 0, 0)
+
+        moveDraw(-22, -6, 0, 0, 0, 0)
+        moveDraw(0, 0, -43, 0, 0, 0)
+        moveDraw(0, 0, 43, 0, 0, 0)
+
+        moveDraw(-13.5, -14, 0, 0, 0, 0)
+        moveDraw(0, 0, -43, 0, 0, 0)
+        moveDraw(0, 0, 43, 0, 0, 0)
+
+        jMove("ASM", 0, 0, 0, 0, 0, 0)
+
+        moveDrive(5, -90)
+
+        moveDraw(-115, 0, -100, 0, 0, 0)
+
+        moveDraw(0, -8, -173, 0, 0, 0)
+        moveDraw(38, 0, 0, 0, 0, 0)
+
+        moveDraw(-38, 0, 0, 0, 0, 0)
+        moveDraw(0, 15, -21, 0, 0, 0)
+        moveDraw(38, 0, 0, 0, 0, 0)
+
+        moveDraw(-38, 0, 0, 0, 0, 0)
+        moveDraw(0, -20, -17, 0, 0, 0)
+        moveDraw(38, 0, 0, 0, 0, 0)
+
+        moveDraw(-38, 0, 0, 0, 0, 0)
+        moveDraw(0, 22, -20, 0, 0, 0)
+        moveDraw(38, 0, 0, 0, 0, 0)
+
+        moveDraw(-45, 0, 0, 0, 0, 0)
+        moveDraw(-45, 0, 200, 0, 0, 0)
+
+        sock.sendall(b'RS_HOME:')  # Move home
+        data = sock.recv(4096)
+        trashResponseCheck(data.decode())  # Check if response is unclear.
 
         sock.sendall(b'RS_DISCONNECT:')  # Disconnect from robot
         data = sock.recv(4096)
@@ -85,7 +124,6 @@ def establishConn():
     except:
         print("Не удалось установить подключение / Превышено время ожидания")
         exit(555)
-
 
 
 sock = socket.socket(socket.AF_INET,  # Internet
