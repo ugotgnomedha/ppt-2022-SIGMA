@@ -70,11 +70,11 @@ def stateDetails():
 
 
 def responseParser(response):
-    if response["state"] != "true":
+    if not response["state"]:
         print("разрыв контура безопасности")
-    if response["ebutton"] == "true":
+    if response["ebutton"]:
         print("кнопка нажата (оператор остановил работу)")
-    if response["end_cap"] == "true":
+    if response["end_cap"]:
         print("концевик зажат (достигнута предельная деформация демпфера)")
     if response["dist"][0] < 50:
         print("Превышена предельная дистанция дальномера")
@@ -89,7 +89,7 @@ sock = socket.socket(socket.AF_INET,  # Internet
 
 UDP_IP = os.environ['host']
 UDP_PORT = os.environ['port']
-#
+
 # UDP_IP = "198.0.0.1"
 # UDP_PORT = 5005
 
