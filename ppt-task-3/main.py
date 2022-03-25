@@ -142,5 +142,5 @@ UDP_PORT = os.environ['port']
 addr = (UDP_IP, int(UDP_PORT))
 
 sock.connect(addr)
-
+sock.settimeout(5)  # timeout for 5 seconds
 establishConnRobot()  # Establish connection to server.
