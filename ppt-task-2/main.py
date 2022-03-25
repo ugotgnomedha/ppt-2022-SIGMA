@@ -87,11 +87,11 @@ def responseParser(response):
 sock = socket.socket(socket.AF_INET,  # Internet
                      socket.SOCK_DGRAM)  # UDP
 
-# UDP_IP = os.environ['host']
-# UDP_PORT = os.environ['port']
-
-UDP_IP = "198.0.0.1"
-UDP_PORT = 5005
+UDP_IP = os.environ['host']
+UDP_PORT = os.environ['port']
+#
+# UDP_IP = "198.0.0.1"
+# UDP_PORT = 5005
 
 addr = (UDP_IP, int(UDP_PORT))
 
