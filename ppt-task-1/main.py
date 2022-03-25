@@ -330,8 +330,8 @@ def rotateImgAruco(image, aruco_coords):
 
 
 font = cv.FONT_HERSHEY_COMPLEX
-img = cv.imread("/Users/darthvader/Desktop/Datasets/S_94.png")
-# img = get_img()
+# img = cv.imread("/Users/darthvader/Desktop/Datasets/S_94.png")
+img = get_img()
 coords_aruco = aruco_scan(img)
 cropped_image = rotateImgAruco(img, coords_aruco)
 vintCoords(cropped_image)
