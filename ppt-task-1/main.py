@@ -129,34 +129,47 @@ def angleCount(coords):
     return angle
 
 
-# def center_point(mask):
-#     coords = []
-#     contours, _ = cv.findContours(mask, cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE)
-#     # print("--------------------")
-#     for cnt in contours:
-#         approx = cv.approxPolyDP(cnt, 0.01 * cv.arcLength(cnt, True), True)
-#         cv.drawContours(img, [approx], 0, 0, 1)
-#         x = approx.ravel()[0]
-#         y = approx.ravel()[1]
-#         # The first order of the contours
-#         # image moment
-#         M = cv.moments(cnt)
-#         # The centroid point
-#         try:
-#             cx = int(M['m10'] / M['m00'])
-#             cy = int(M['m01'] / M['m00'])
-#         except ZeroDivisionError:
-#             iii = 0
-#         if 12 < len(approx) < 19 and len(cnt) > 65 or 9 < len(approx) < 13 and 70 < len(cnt) < 85:
-#             cv.putText(img, "Конус", (x, y), font, 0.5, 0)
-#             # print("Конус - 6")
-#             print("Координаты:", cx, cy)
-#             coords.append([cx, cy])
-#             # print("")
-#         elif 3 < len(approx) < 14 and 35 < len(cnt) < 110 or 3 < len(approx) < 9 and 10 < len(cnt) < 50:
-#             cv.putText(img, "Пирамида", (x, y), font, 1, 0)
-#             coords.append([cx, cy])
-#     return coords
+def vintCoords(image):
+    coords = []
+    original_image = image
+
+    img_hsv = cv.cvtColor(original_image, cv.COLOR_BGR2HSV)
+    threshold = cv.inRange(img_hsv, (5, 0, 0), (60, 180, 255))
+    kernel = cv.getStructuringElement(cv.MORPH_RECT, (2, 3))
+    threshold = cv.morphologyEx(threshold, cv.MORPH_CLOSE, kernel)
+
+    #cv.imshow('gray', threshold)
+    #cv.waitKey()
+    contours, hierarchy = cv.findContours(threshold.copy(), cv.RETR_EXTERNAL, cv.CHAIN_APPROX_NONE)
+
+    sorted_contours = sorted(contours, key=cv.contourArea, reverse=True)
+
+    for (i, c) in enumerate(sorted_contours):
+        approx = cv.approxPolyDP(c, 0.01 * cv.arcLength(c, True), True)
+        cv.drawContours(original_image, [approx], 0, 0, 1)
+        x = approx.ravel()[0]
+        y = approx.ravel()[1]
+        #image moment
+        M = cv.moments(c)
+        # The centroid point
+        try:
+            cx = int(M['m10'] / M['m00'])
+            cy = int(M['m01'] / M['m00'])
+        except ZeroDivisionError:
+            iii = 0
+        if len(c) > 100:
+            #print(len(c), " ----- ", len(approx))
+            if len(c) < 410 and len(approx) < 11 or len(c) < 410 and len(approx) > 18:
+                cv.putText(cropped_contour, "Контейнер для винтов", (cx, cy), font, 0.5, 200, 1)
+                cv.circle(cropped_contour, [cx, cy], 2, (255, 255, 255), -1)
+                #print("Контейнер для винтов")
+                #print(cx, cy)
+            x, y, w, h = cv.boundingRect(c)
+
+            cropped_contour = original_image[y:y + h, x:x + w]
+            #cv.imshow('Image', cropped_contour)
+            #cv.waitKey(0)
+    return coords
 
 
 def second_scan(frame):
@@ -231,10 +244,10 @@ def second_scan(frame):
                 else:
                     final_result[key].update({'coordinates': coords_steklo})
 
-    print(centers)
+    #print(centers)
     print(final_result)
-    cv.imshow("img", frame)
-    cv.waitKey(0)
+    #cv.imshow("img", frame)
+    #cv.waitKey(0)
     return centers
 
 
@@ -311,20 +324,23 @@ def rotateImgAruco(image, aruco_coords):
     # Compute the perspective transform M
     M = cv.getPerspectiveTransform(input_pts, output_pts)
     out = cv.warpPerspective(image, M, (maxWidth, maxHeight), flags=cv.INTER_LINEAR)
-    cv.imshow("perspective", out)
-    cv.waitKey(0)
+    #cv.imshow("perspective", out)
+    #cv.waitKey(0)
     return out
 
 
 font = cv.FONT_HERSHEY_COMPLEX
-# img = cv.imread("/Users/darthvader/Desktop/Datasets/S_98.png")
-img = get_img()
+img = cv.imread("/Users/darthvader/Desktop/Datasets/S_94.png")
+# img = get_img()
 coords_aruco = aruco_scan(img)
 cropped_image = rotateImgAruco(img, coords_aruco)
+vintCoords(cropped_image)
 coords_aruco = second_scan(cropped_image)
 
 writeJson()
 
+#cv.imshow("final", cropped_image)
+#cv.waitKey()
 
 # img_hsv = cv.cvtColor(cropped_image, cv.COLOR_BGR2HSV)
 # threshold = cv.inRange(img_hsv, (10, 0, 0), (50, 255, 200))
